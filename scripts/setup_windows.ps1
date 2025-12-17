@@ -25,7 +25,8 @@ Write-Host ""
 
 # Install dependencies
 Write-Host "Installing Python dependencies..." -ForegroundColor Yellow
-pip install -r requirements.txt
+Write-Host "Note: Using simplified requirements for Windows server" -ForegroundColor Cyan
+pip install -r requirements-server.txt
 
 # Enable IP forwarding
 Write-Host ""
@@ -44,9 +45,11 @@ Write-Host ""
 Write-Host "2. Generate encryption key (if not already done):"
 Write-Host "   python scripts\generate_key.py" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "3. Start the server:"
-Write-Host "   python server\server.py --key <HEX_KEY>" -ForegroundColor Yellow
+Write-Host "3. Start the server (use simple version - no TUN drivers required):"
+Write-Host "   python server\server_simple.py --key <HEX_KEY>" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Example:" -ForegroundColor Cyan
-Write-Host "   python server\server.py --key abc123..." -ForegroundColor Yellow
+Write-Host "   python server\server_simple.py --key abc123..." -ForegroundColor Yellow
+Write-Host ""
+Write-Host "Note: server_simple.py doesn't require pytun or TUN drivers!" -ForegroundColor Green
 Write-Host ""
