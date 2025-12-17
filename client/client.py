@@ -84,12 +84,21 @@ class TunnelClient:
 
         try:
             # Create TUN device
-            tun = pytun.TunTapDevice(flags=pytun.IFF_TUN | pytun.IFF_NO_PI)
-            tun.addr = self.tun_ip
-            tun.netmask = '255.255.255.0'
-            tun.dstaddr = self.gateway_ip
-            tun.mtu = 1500
-            tun.up()
+            # pytun_pmd3 has different API than python-pytun
+            if hasattr(pytun, 'IFF_TUN'):
+                # Standard pytun (Linux)
+                tun = pytun.TunTapDevice(flags=pytun.IFF_TUN | pytun.IFF_NO_PI)
+                tun.addr = self.tun_ip
+                tun.netmask = '255.255.255.0'
+                tun.dstaddr = self.gateway_ip
+                tun.mtu = 1500
+                tun.up()
+            else:
+                # pytun_pmd3 (macOS)
+                tun = pytun.TunTapDevice()
+                tun.addr = self.tun_ip
+                tun.mtu = 1500
+                tun.up()
 
             self.tun_name = tun.name
 
@@ -105,6 +114,8 @@ class TunnelClient:
             sys.exit(1)
         except Exception as e:
             logger.error(f"Failed to create TUN interface: {e}")
+            import traceback
+            traceback.print_exc()
             sys.exit(1)
 
     def setup_routing(self):
