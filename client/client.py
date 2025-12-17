@@ -142,46 +142,62 @@ class TunnelClient:
 
             # Get current default gateway
             result = subprocess.run(
-                ['route', '-n', 'get', 'default'],
+                ['netstat', '-rn'],
                 capture_output=True,
-                text=True
+                text=True,
+                check=True
             )
+
+            # Parse default gateway
             for line in result.stdout.split('\n'):
-                if 'gateway:' in line:
-                    self.original_gateway = line.split(':')[1].strip()
-                    break
+                if line.startswith('default') and 'UGSc' in line:
+                    parts = line.split()
+                    if len(parts) >= 2 and parts[1] != 'link' and not parts[1].startswith('fe80'):
+                        self.original_gateway = parts[1]
+                        break
 
             if not self.original_gateway:
                 logger.warning("Could not determine original gateway")
+                logger.warning("You may need to configure routing manually")
                 return
 
             logger.info(f"Original gateway: {self.original_gateway}")
 
-            # Add route to server via original gateway
-            subprocess.run([
-                'route', 'add', '-host', self.server_host,
-                self.original_gateway
-            ], check=False)
+            # CRITICAL: Add route to server via original gateway FIRST
+            # This ensures we can still reach the server after changing default route
+            logger.info(f"Adding route to server {self.server_host} via {self.original_gateway}")
+            subprocess.run(
+                ['route', 'add', '-host', self.server_host, self.original_gateway],
+                check=False,  # Don't fail if already exists
+                capture_output=True
+            )
 
-            logger.info(f"Added route to server {self.server_host} via {self.original_gateway}")
+            # Now change default route to tunnel
+            logger.info(f"Changing default route to tunnel ({self.gateway_ip})")
 
-            # Set new default route through tunnel
-            subprocess.run([
-                'route', 'add', '-net', '0.0.0.0',
-                self.gateway_ip
-            ], check=False)
+            # Delete old default route
+            subprocess.run(
+                ['route', 'delete', 'default', self.original_gateway],
+                check=False,
+                capture_output=True
+            )
 
-            logger.info(f"Added default route via {self.gateway_ip}")
+            # Add new default route through tunnel
+            result = subprocess.run(
+                ['route', 'add', 'default', self.gateway_ip],
+                capture_output=True,
+                text=True
+            )
 
-            # Set DNS (optional)
-            # subprocess.run([
-            #     'networksetup', '-setdnsservers', 'Wi-Fi', '8.8.8.8', '8.8.4.4'
-            # ], check=False)
-
-            logger.info("Routing configured successfully")
+            if result.returncode == 0:
+                logger.info("Routing configured successfully")
+                logger.info(f"All traffic now goes through {self.gateway_ip}")
+            else:
+                logger.warning(f"Could not add default route: {result.stderr}")
 
         except Exception as e:
             logger.error(f"Error setting up routing: {e}")
+            logger.warning("Routing may not be configured correctly")
 
     def restore_routing(self):
         """Restore original routing."""
