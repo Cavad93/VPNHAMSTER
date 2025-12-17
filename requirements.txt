@@ -1,7 +1,6 @@
 cryptography>=41.0.0
 pycryptodome>=3.19.0
 
-# TUN/TAP support (optional for server, required for client)
-# Windows server can run without pytun in proxy mode
-# Mac client requires pytun
-python-pytun>=2.4.1; sys_platform == 'darwin'
+# TUN/TAP support for Mac client
+# Use pytun-pmd3 which supports macOS
+pytun-pmd3>=0.5.0; sys_platform == 'darwin'
