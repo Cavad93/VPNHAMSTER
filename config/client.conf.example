@@ -1,0 +1,20 @@
+# VPN Tunnel Client Configuration Example
+# Copy this file to client.conf and edit as needed
+
+[client]
+# Server IP address (your Windows server in Astana)
+server = 1.2.3.4
+
+# Server TCP port
+port = 8888
+
+# Local TUN interface IP
+tun_ip = 10.8.0.2
+
+# Gateway IP (server's TUN IP)
+gateway = 10.8.0.1
+
+[encryption]
+# Encryption key (hex string) - must match server
+# Get from server administrator
+key = YOUR_ENCRYPTION_KEY_HERE
