@@ -79,7 +79,8 @@ class TunnelClient:
         """Create and configure TUN interface."""
         if not HAS_PYTUN:
             logger.error("pytun is required for TUN interface")
-            logger.error("Install with: pip install python-pytun")
+            logger.error("Install with: sudo -H pip3 install -r requirements.txt")
+            logger.error("Or directly: sudo -H pip3 install pytun-pmd3")
             sys.exit(1)
 
         try:
