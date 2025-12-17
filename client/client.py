@@ -30,8 +30,7 @@ try:
 except ImportError:
     try:
         # Try pytun-pmd3 (Mac support)
-        from pytun_pmd3 import tuntap
-        pytun = tuntap
+        import pytun_pmd3 as pytun
         HAS_PYTUN = True
     except ImportError:
         HAS_PYTUN = False
