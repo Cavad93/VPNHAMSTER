@@ -28,8 +28,14 @@ try:
     import pytun
     HAS_PYTUN = True
 except ImportError:
-    HAS_PYTUN = False
-    print("Warning: pytun not available. Install with: pip install python-pytun")
+    try:
+        # Try pytun-pmd3 (Mac support)
+        from pytun_pmd3 import tuntap
+        pytun = tuntap
+        HAS_PYTUN = True
+    except ImportError:
+        HAS_PYTUN = False
+        print("Warning: pytun not available. Install with: pip install pytun-pmd3")
 
 
 logging.basicConfig(
