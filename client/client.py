@@ -95,9 +95,26 @@ class TunnelClient:
                 tun.up()
             else:
                 # pytun_pmd3 (macOS)
+                # Create device first
                 tun = pytun.TunTapDevice()
-                tun.addr = self.tun_ip
-                tun.mtu = 1500
+                self.tun_name = tun.name
+
+                # Configure using ifconfig (pytun_pmd3 doesn't support direct addr setting)
+                logger.info(f"Configuring {tun.name} with ifconfig...")
+                subprocess.run(
+                    ['ifconfig', tun.name, self.tun_ip, self.gateway_ip],
+                    check=True,
+                    capture_output=True
+                )
+
+                # Set MTU
+                subprocess.run(
+                    ['ifconfig', tun.name, 'mtu', '1500'],
+                    check=True,
+                    capture_output=True
+                )
+
+                # Bring up
                 tun.up()
 
             self.tun_name = tun.name
