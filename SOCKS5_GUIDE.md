@@ -100,7 +100,7 @@ pip3 install -r requirements.txt
 # Замените IP_СЕРВЕРА и КЛЮЧ на ваши значения
 python3 client/local_proxy.py \
   --server IP_СЕРВЕРА \
-  --remote-port 1080 \
+  --port 1080 \
   --key КЛЮЧ
 ```
 
@@ -108,7 +108,7 @@ python3 client/local_proxy.py \
 ```bash
 python3 client/local_proxy.py \
   --server 195.49.210.123 \
-  --remote-port 1080 \
+  --port 1080 \
   --key a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2
 ```
 
@@ -208,7 +208,7 @@ sudo ./scripts/disable_system_proxy.sh
 Добавьте в `~/.zshrc` или `~/.bashrc`:
 
 ```bash
-alias vpn-start='cd ~/VPNHAMSTER && python3 client/local_proxy.py --server IP_СЕРВЕРА --remote-port 1080 --key КЛЮЧ'
+alias vpn-start='cd ~/VPNHAMSTER && python3 client/local_proxy.py --server IP_СЕРВЕРА --port 1080 --key КЛЮЧ'
 alias vpn-proxy-on='sudo ~/VPNHAMSTER/scripts/setup_system_proxy.sh'
 alias vpn-proxy-off='sudo ~/VPNHAMSTER/scripts/disable_system_proxy.sh'
 ```
@@ -324,7 +324,7 @@ networksetup -getsocksfirewallproxy Wi-Fi
 Mac:
 ```bash
 export VPN_KEY="ваш_ключ"
-python3 client/local_proxy.py --server IP --remote-port 1080 --key "$VPN_KEY"
+python3 client/local_proxy.py --server IP --port 1080 --key "$VPN_KEY"
 ```
 
 Windows:
@@ -373,7 +373,7 @@ A: Да! Укажите другой порт при запуске:
 python server\socks5_server.py --port 8080 --key КЛЮЧ
 
 # Клиент
-python3 client/local_proxy.py --server IP --remote-port 8080 --key КЛЮЧ
+python3 client/local_proxy.py --server IP --port 8080 --key КЛЮЧ
 ```
 
 **Q: Можно ли подключить несколько клиентов к одному серверу?**

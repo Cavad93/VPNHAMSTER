@@ -89,7 +89,7 @@ python server\socks5_server.py --host 0.0.0.0 --port 1080 --key YOUR_KEY
 pip3 install -r requirements.txt
 
 # 2. Запустите локальный прокси
-python3 client/local_proxy.py --server IP_СЕРВЕРА --remote-port 1080 --key КЛЮЧ
+python3 client/local_proxy.py --server IP_СЕРВЕРА --port 1080 --key КЛЮЧ
 
 # 3. Включите системный прокси (в новом терминале)
 sudo ./scripts/setup_system_proxy.sh
